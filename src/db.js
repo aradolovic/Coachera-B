@@ -1,49 +1,28 @@
-/*app.get('/test',(req,res) => {
-  database.collection("club").find({}).toArray((error,result)=>{
-    if(error){
-      console.log(error)
-    }
+ import mongo from 'mongodb'
+ const uri= "mongodb+srv://antonio:antonio@cluster0.ksyz5.mongodb.net/Football?retryWrites=true&w=majority"
 
-    res.send(result)
-  })
-} ) 
+var DATABASE = "Football"
+var db = null;
 
-
-app.post('/test',(req,res) =>{
-    database.collection("club").count({},function(error,numofdocs){
-        if(error){
-            console.log(error)
-        }
-        database.collection("club").insertOne({
-           Departmentid : numofdocs+1,
-           name : req.body['name'],
-           city : req.body['city'],
-           country : req.body['country']
-        })
-
-        res.send("added success")
-    })
-
-   app.patch('/test',(req,res) =>{
-
-            database.collection("club").updateOne(
-            {
-                "city" :req.body['city']
-            },
-            {
-                 $set:{
-                    "name":req.body['name']
+let client = new mongo.MongoClient(uri,{
+    useNewUrlParser:true,
+    useUnifiedTopology:true
+})
+export default () => {
+    return new Promise((resolve, reject) => {
+        // ako smo inicijalizirali bazu i klijent je još uvijek spojen
+        if (db && client.isConnected()) {
+            resolve(db);
+        } else {
+            client.connect((err) => {
+                if (err) {
+                    reject('Spajanje na bazu nije uspjelo:' + err);
+                } else {
+                    console.log('Database connected successfully!');
+                    db = client.db('fipugram');
+                    resolve(db);
                 }
-            })
-    
-            res.send("updated success")
-        })
-        /*app.delete('/test/:id',(req,res)=>{
-            
-            database.collection("club").deleteOne(
-            {
-                DepartmentId:parseInt(req.params.id)
-            })            
-            res.send("delete success")
-
-        })*/
+            });
+        }
+    });
+};

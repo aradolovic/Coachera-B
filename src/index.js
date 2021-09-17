@@ -1,6 +1,8 @@
 import express from 'express'
 import bodyParser from 'body-parser'
 import req from 'express/lib/request'
+import auth from "./auth.js"
+import connect from './db.js';
 //const mongoose = require('mongoose')
 var fileUpload = require('express-fileupload')
 var fs = require('fs')
@@ -15,26 +17,18 @@ app.use(fileUpload())
 app.use(cors())
 app.use('/Photos',express.static(__dirname+'/Photos'))
 
-const port = 3000
-var MongoClient = require("mongodb").MongoClient
-const uri= "mongodb+srv://antonio:antonio@cluster0.ksyz5.mongodb.net/Football?retryWrites=true&w=majority"
 
 
 var DATABASE = "Football"
 var database
 app.listen(port,() => 
 {
-    MongoClient.connect(uri,{
-        useNewUrlParser:true,
-        useUnifiedTopology:true
-    }, (error,client)=>{
-        database=client.db("Football")
-    })
+
   console.log("succes ")
 })
 
 
-app.get('/test',(request,response)=>{
+app.get('/test',async (request,response)=>{
 
     database.collection("club").find({}).toArray((error,result)=>{
         if(error){
@@ -46,6 +40,14 @@ app.get('/test',(request,response)=>{
 
 })
 
+app.post('/users', async (req,res)=>{
+  let user = req.body
+
+  auth.registerUser(user);
+
+  res.json(user);
+
+})
 app.post('/test',(request,response)=>{
 
   database.collection("club").count({},function(error,numOfDocs){
