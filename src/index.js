@@ -4,15 +4,16 @@ import req from 'express/lib/request'
 //const mongoose = require('mongoose')
 var fileUpload = require('express-fileupload')
 var fs = require('fs')
-
-//app.use(fileUpload())
-//app.use('/Photos',Express.static(__dirname+'/Photos') )
 var cors = require('cors')
 
 
 const app = express()
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({extended:true}))
+
+app.use(fileUpload())
+app.use(cors())
+app.use('/Photos',express.static(__dirname+'/Photos'))
 
 const port = 3000
 var MongoClient = require("mongodb").MongoClient
@@ -93,7 +94,7 @@ app.delete('/test/:id',(request,response)=>{
 })
 
 
-app.post('/test/savefille ',(request,response)=>{
+/*app.post('/test/savefile ',(request,response)=>{
 
   fs.writeFile("./Photos/"+request.files.file.name,
   request.files.file.data, function (err){
@@ -103,7 +104,7 @@ app.post('/test/savefille ',(request,response)=>{
     response.send(request.files.file.name)
   }  
   )
-})
+})*/
 
 
 
